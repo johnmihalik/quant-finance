@@ -11,6 +11,12 @@ import pandas_datareader.data as pdr
 import datetime
 import copy
 import matplotlib.pyplot as plt
+import yfinance as yf
+
+yf.pdr_override()
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 10000)
+
 
 
 def CAGR(DF):
@@ -57,7 +63,7 @@ while len(tickers) != 0 and attempt <= 5:
     tickers = [j for j in tickers if j not in drop] # removing stocks whose data has been extracted from the ticker list
     for i in range(len(tickers)):
         try:
-            ohlc_mon[tickers[i]] = pdr.get_data_yahoo(tickers[i],datetime.date.today()-datetime.timedelta(1900),datetime.date.today(),interval='m')
+            ohlc_mon[tickers[i]] = pdr.get_data_yahoo(tickers[i],datetime.date.today()-datetime.timedelta(1900),datetime.date.today(),interval='1mo')
             ohlc_mon[tickers[i]].dropna(inplace = True)
             drop.append(tickers[i])       
         except:
@@ -106,7 +112,7 @@ sharpe(pflio(return_df,6,3),0.025)
 max_dd(pflio(return_df,6,3)) 
 
 #calculating KPIs for Index buy and hold strategy over the same period
-DJI = pdr.get_data_yahoo("^DJI",datetime.date.today()-datetime.timedelta(1900),datetime.date.today(),interval='m')
+DJI = pdr.get_data_yahoo("^DJI",datetime.date.today()-datetime.timedelta(1900),datetime.date.today(),interval='1mo')
 DJI["mon_ret"] = DJI["Adj Close"].pct_change()
 CAGR(DJI)
 sharpe(DJI,0.025)

@@ -11,13 +11,17 @@ import itertools
 #stock_list = ['AAPL','MSFT','AMZN','CAT','UA','GOOG', 'PYPL']
 stock_list = ['KBE', 'KRE', 'KCE', 'KIE', 'XAR', 'XTN', 'XBI', 'XPH', 'XHE', 'XHS', 'XOP', 'XES', 'XME', 'XRT', 'XHB', 'XSD', 'XSW', 'XNTK', 'XITK', 'XTL', 'XTH' ,'XWEB']
 
+# How many stocks should the portfolio hold
 portfolio_size = 4
 
+# The minimum and maximum allocation size of each stock in the portfolio
 min_allocation = 0.1
 max_allocation = 0.5
 
+# The start/end dates of historical performance data to use
 start = '2018-01-01'
 end = '2019-11-20'
+
 
 def load_sp500_from_file():
     print("Loading SP500 Dataset...")
@@ -79,6 +83,15 @@ if __name__ == "__main__":
     data = download_data(stock_list)
     #data = load_sp500_from_file()
 
+    ticker_columns = []
+    ticker_weights = []
+    additional_columns = ["Returns", "Variance"]
+    for i in range(1, portfolio_size + 1):
+        ticker_columns.append("Stock" + str(i))
+        ticker_weights.append("Weight" + str(i))
+
+    df = pd.DataFrame(columns=ticker_columns + ticker_weights + additional_columns)
+
     print("Finding Optimal Portfolios...")
 
     for p in findsubsets(stock_list, portfolio_size):
@@ -97,6 +110,7 @@ if __name__ == "__main__":
         portfolio_variance = np.sqrt(np.dot(weights.T, np.dot(returns.cov() * 252, weights)))
 
         print(" Return = %4.3f , Var = %4.3f" %(portfolio_return, portfolio_variance))
+
 
 	#print_portfolio_return(returns, weights)
 	#print_portfolio_variance(returns, weights)
